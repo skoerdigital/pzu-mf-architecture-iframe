@@ -1,3 +1,3 @@
 {
-    "iframeUrl": "#{iframeUrl}"
+    "iframeUrl": "#{IFRAME_URL}"
 }

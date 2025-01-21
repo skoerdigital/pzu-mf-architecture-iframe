@@ -19,7 +19,7 @@ spec:
 
       containers:
         - name: iframe-integrator-container
-          image: ghcr.io/skoerdigital/pzu-mf-architecture/iframe-integrator:${IMAGE_TAG}
+          image: ghcr.io/skoerdigital/pzu-mf-architecture-iframe/iframe-integrator:${IMAGE_TAG}
           imagePullPolicy: Always
           ports:
             - containerPort: 80
