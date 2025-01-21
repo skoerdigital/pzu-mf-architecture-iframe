@@ -62,6 +62,6 @@ jobs:
         run: |
           kubectl get nodes
 
-          IMAGE_TAG=${{ github.sha }} envsubst < k8s/deployment-host.yaml > deployment_rendered.yaml
+          IMAGE_TAG=${{ github.sha }} envsubst < k8s/deployment.yaml > deployment_rendered.yaml
           kubectl apply -f deployment_rendered.yaml
-          kubectl apply -f k8s/service-host.yaml
+          kubectl apply -f k8s/service.yaml
