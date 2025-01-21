@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: iframe-integrator-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: iframe-integrator   # musi być taka sama etykieta jak w Deployment
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http

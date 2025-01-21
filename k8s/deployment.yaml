@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iframe-integrator-deployment
+  labels:
+    app: iframe-integrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iframe-integrator
+  template:
+    metadata:
+      labels:
+        app: iframe-integrator
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
+      containers:
+        - name: iframe-integrator-container
+          image: ghcr.io/skoerdigital/pzu-mf-architecture/iframe-integrator:${IMAGE_TAG}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
