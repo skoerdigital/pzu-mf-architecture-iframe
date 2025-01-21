@@ -1,0 +1,16 @@
+{
+  "name": "iframe-integrator",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/iframe-integrator/src",
+  "tags": [],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/iframe-integrator/jest.config.ts"
+      }
+    }
+  }
+}

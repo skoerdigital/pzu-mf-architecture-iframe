@@ -105,6 +105,14 @@
         "testStorybookTargetName": "test:storybook",
         "staticStorybookTargetName": "static:storybook"
       }
+    },
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview"
+      }
     }
   ],
   "generators": {
@@ -120,6 +128,12 @@
     },
     "@nx/angular:component": {
       "style": "scss"
+    },
+    "@nx/web:application": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "none"
     }
   }
 }

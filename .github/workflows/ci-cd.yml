@@ -1,0 +1,67 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  build-and-push-iframe-integrator:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    name: Build & Push iframe-integrator to GHCR
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker image for iframe-integrator
+        run: |
+          docker build \
+            -f apps/iframe-integrator/Dockerfile \
+            -t ghcr.io/${{ github.repository }}/iframe-integrator:${{ github.sha }} \
+            .
+      
+      - name: Push Docker image for iframe-integrator
+        run: |
+          docker push ghcr.io/${{ github.repository }}/iframe-integrator:${{ github.sha }}
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI and authenticate with GCP
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          export_default_credentials: true
+          install_components: gke-gcloud-auth-plugin
+
+      # # (opcjonalnie) Skonfiguruj Docker, gdybyś chciał pushować/pullować z GCR/Artifact Registry
+      # - run: gcloud --quiet auth configure-docker
+
+      - name: Get GKE credentials and configure kubectl
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GCP_CLUSTER_NAME }} \
+            --region=${{ secrets.GCP_REGION }} \
+            --project=${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Deploy to GKE
+        run: |
+          kubectl get nodes
+
+          IMAGE_TAG=${{ github.sha }} envsubst < k8s/deployment-host.yaml > deployment_rendered.yaml
+          kubectl apply -f deployment_rendered.yaml
+          kubectl apply -f k8s/service-host.yaml
